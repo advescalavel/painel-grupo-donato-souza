@@ -1,151 +1,176 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" data-tema="claro">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel Vigia — Grupo Donato Souza</title>
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+<script>
+  try {
+    var t = localStorage.getItem('ae-tema:painel-vigia-donato-souza');
+    if (t) document.documentElement.setAttribute('data-tema', t);
+  } catch (e) {}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="ae-brand.css">
 <link rel="stylesheet" href="styles.css">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
-<body class="ae-app" data-tema="claro">
-<div class="ae-app">
+<body>
+<div class="vg-fita"></div>
+<div class="ae-app" id="app">
 
-  <!-- Cabeçalho -->
-  <header class="ae-cabecalho">
-    <div class="ae-cabecalho__marca">
-      <span class="ae-logo ae-logo--completo" aria-label="Advocacia Escalável" id="logoCompleto"></span>
-      <span class="ae-logo ae-logo--isotipo" aria-label="Advocacia Escalável" id="logoIsotipo"></span>
+  <header class="vg-topo">
+    <div class="vg-topo__marca">
+      <span class="ae-logo ae-logo--completo vg-so-largo" aria-label="Advocacia Escalável" id="logo-completo"></span>
+      <span class="ae-logo ae-logo--isotipo vg-so-compacto" aria-label="Advocacia Escalável" id="logo-isotipo"></span>
       <span class="ae-produto__sep" aria-hidden="true"></span>
-      <span class="ae-produto__nome">PAINEL <b>VIGIA</b></span>
+      <span class="ae-produto__nome">PAINEL <b>VIGIA</b><span class="vg-cliente-nome">Grupo Donato Souza</span></span>
     </div>
-    <div class="ae-cabecalho__contexto">
-      <h1 class="ae-titulo-app">Sucesso do Cliente</h1>
-      <p class="ae-apoio" id="nomeEscritorio">Grupo Donato Souza</p>
-    </div>
-    <div class="ae-cabecalho__acoes">
-      <button class="ae-tema-toggle" id="btnTema" type="button" aria-label="Alternar tema claro/escuro">
-        <span id="temaIcone">🌙</span> <span id="temaLabel">Escuro</span>
+
+    <div class="vg-topo__acoes">
+      <span class="vg-atualizado" id="atualizado" aria-live="polite"></span>
+      <button class="ae-btn vg-btn-icone" id="btn-atualizar" type="button" aria-label="Atualizar dados">
+        <span class="vg-gira" aria-hidden="true">↻</span><span class="vg-rotulo-btn">Atualizar</span>
       </button>
-      <button class="ae-btn" id="btnAtualizar" type="button">↻ Atualizar</button>
+      <button class="ae-btn vg-btn-icone" id="btn-tema" type="button" aria-label="Alternar tema claro/escuro">
+        <span aria-hidden="true">◐</span><span class="vg-rotulo-btn">Tema</span>
+      </button>
     </div>
   </header>
 
-  <!-- Filtros -->
-  <div class="ae-filtros">
-    <div class="ae-filtros__grupo">
-      <span class="ae-filtros__label">Período</span>
-      <button class="ae-chip is-ativo" data-periodo="7">7 dias</button>
-      <button class="ae-chip" data-periodo="30">30 dias</button>
-      <button class="ae-chip" data-periodo="90">90 dias</button>
-      <button class="ae-chip" data-periodo="tudo">Tudo</button>
+  <p class="vg-demo" id="aviso-demo" hidden>
+    <span aria-hidden="true">◍</span>
+    <span id="aviso-demo-texto">Dados de demonstração — o painel não conseguiu falar com a API do Vigia. Nenhum número aqui é dado real da operação.</span>
+  </p>
+
+  <div class="vg-barra">
+    <div class="vg-abas" role="tablist" aria-label="Seção do painel">
+      <button class="vg-abas__item is-ativo" data-secao="visao" role="tab" aria-selected="true" type="button">Visão geral</button>
+      <button class="vg-abas__item" data-secao="qualidade" role="tab" aria-selected="false" type="button">Qualidade do atendimento</button>
+      <button class="vg-abas__item" data-secao="auditoria" role="tab" aria-selected="false" type="button">Atendimentos</button>
     </div>
-    <div class="ae-filtros__grupo">
-      <span class="ae-filtros__label">Status</span>
-      <button class="ae-chip is-ativo" data-status="todos">Todos</button>
-      <button class="ae-chip" data-status="aberto">Em aberto</button>
-      <button class="ae-chip" data-status="concluido">Concluídos</button>
+
+    <div class="vg-filtros">
+      <div class="vg-filtro" id="filtro-periodo-wrap">
+        <button class="vg-campo" id="btn-periodo" type="button" aria-haspopup="dialog" aria-expanded="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span class="vg-campo__valor" id="periodo-rotulo">Hoje</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+
+        <div class="vg-popover" id="periodo-popup" hidden role="dialog" aria-label="Selecionar período">
+          <div class="vg-popover__col">
+            <p class="ae-rotulo">Atalhos</p>
+            <button class="vg-opcao is-ativo" data-preset="hoje" type="button">Hoje</button>
+            <button class="vg-opcao" data-preset="semana-atual" type="button">Semana atual</button>
+            <button class="vg-opcao" data-preset="semana-anterior" type="button">Semana anterior</button>
+            <button class="vg-opcao" data-preset="mes-atual" type="button">Mês atual</button>
+            <button class="vg-opcao" data-preset="mes-anterior" type="button">Mês anterior</button>
+            <button class="vg-opcao" data-preset="trimestre-atual" type="button">Trimestre atual</button>
+            <button class="vg-opcao" data-preset="semestre-atual" type="button">Semestre atual</button>
+            <button class="vg-opcao" data-preset="ano-atual" type="button">Ano atual</button>
+          </div>
+          <div class="vg-popover__col">
+            <p class="ae-rotulo">Conjunto de meses</p>
+            <div class="vg-lista" id="lista-meses"></div>
+            <p class="ae-rotulo">Conjunto de semanas</p>
+            <div class="vg-lista" id="lista-semanas"></div>
+          </div>
+          <div class="vg-popover__col">
+            <p class="ae-rotulo">Conjunto de anos</p>
+            <div class="vg-lista" id="lista-anos"></div>
+            <p class="ae-rotulo">Dia ou intervalo</p>
+            <input type="date" id="periodo-custom-desde" class="vg-campo vg-data" title="Preencha só este campo para selecionar um único dia">
+            <input type="date" id="periodo-custom-ate" class="vg-campo vg-data" title="Opcional — preencha só se quiser um intervalo">
+            <p class="vg-card__apoio">Só o primeiro campo = um único dia.</p>
+          </div>
+          <div class="vg-popover__rodape">
+            <span class="vg-card__apoio" id="periodo-contagem">Nenhum conjunto marcado</span>
+            <span class="vg-acoes">
+              <button class="ae-btn" id="btn-periodo-limpar" type="button">Limpar seleção</button>
+              <button class="ae-btn" id="btn-periodo-cancelar" type="button">Cancelar</button>
+              <button class="ae-btn ae-btn--primario" id="btn-periodo-aplicar" type="button">Aplicar</button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <select id="filtro-base-data" class="vg-campo vg-campo--sel" aria-label="Base da data do período">
+        <option value="criacao">Período por data de criação</option>
+        <option value="conclusao">Período por data de conclusão</option>
+      </select>
+      <select id="filtro-status" class="vg-campo vg-campo--sel" aria-label="Filtrar por status"></select>
+      <select id="filtro-criterio" class="vg-campo vg-campo--sel" aria-label="Filtrar por critério avaliado">
+        <option value="">Todos os critérios</option>
+      </select>
+      <select id="filtro-avaliado" class="vg-campo vg-campo--sel" aria-label="Filtrar por avaliação do Vigia">
+        <option value="sim" selected>Avaliados pelo Vigia</option>
+        <option value="nao">Não avaliados</option>
+        <option value="todos">Todos</option>
+      </select>
+
+      <div class="vg-filtros__resumo" id="filtros-resumo"></div>
     </div>
   </div>
 
-  <!-- KPIs -->
-  <section class="ae-kpis" id="kpis" aria-label="Indicadores principais">
-    <div class="ae-carregando">Carregando indicadores…</div>
-  </section>
+  <main>
+    <section id="secao-visao" role="tabpanel" aria-label="Visão geral">
+      <div class="vg-kpis" id="kpis-visao"></div>
+      <div class="vg-graficos" id="graficos-visao"></div>
+    </section>
 
-  <!-- Série + distribuição -->
-  <section class="ae-grade">
-    <div class="ae-card">
-      <div class="ae-card__cabecalho">
-        <h2 class="ae-titulo-secao">Atendimentos e efetividade</h2>
-        <span class="ae-legenda">
-          <span class="ae-legenda__item"><span class="ae-legenda__ponto" style="background: var(--ae-serie-2)"></span>Atendimentos</span>
-          <span class="ae-legenda__item"><span class="ae-legenda__ponto" style="background: var(--ae-serie-1)"></span>Score médio</span>
-        </span>
+    <section id="secao-qualidade" role="tabpanel" aria-label="Qualidade do atendimento" hidden>
+      <div class="vg-kpis" id="kpis-qualidade"></div>
+      <div class="vg-graficos" id="graficos-qualidade"></div>
+    </section>
+
+    <section id="secao-auditoria" role="tabpanel" aria-label="Atendimentos" hidden>
+      <div class="vg-tabela-card">
+        <div class="vg-tabela-topo">
+          <h2 class="vg-tabela-topo__titulo">Atendimentos avaliados</h2>
+          <span class="vg-tabela-topo__meta" id="tabela-meta"></span>
+          <div class="vg-tabela-topo__dir">
+            <label class="vg-card__apoio" for="filtro-limite">Por página</label>
+            <select id="filtro-limite" class="vg-campo vg-campo--sel" aria-label="Atendimentos por página">
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+        </div>
+        <div class="vg-sinais-filtro" id="chips-auditoria" role="group" aria-label="Filtros de auditoria"></div>
+        <div class="vg-tabela-wrap" id="tabela-wrap">
+          <table class="vg-tabela">
+            <colgroup id="tabela-colgroup"></colgroup>
+            <thead id="tabela-cabecalho"></thead>
+            <tbody id="tabela-corpo"></tbody>
+          </table>
+        </div>
+        <div class="vg-paginacao" id="paginacao"></div>
       </div>
-      <canvas id="graficoSerie" height="220"></canvas>
-    </div>
-    <div class="ae-card">
-      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Distribuição de score</h2>
-      <div class="ae-barra-faixas" id="distribuicaoScore"></div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <!-- Critérios + falhas -->
-  <section class="ae-grade">
-    <div class="ae-card">
-      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Critérios de avaliação</h2>
-      <p class="ae-apoio" style="margin:-8px 0 14px">% de atendimentos avaliados com nota ≥ 90 em cada critério</p>
-      <div class="ae-criterios" id="criterios"></div>
-    </div>
-    <div class="ae-card">
-      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Falhas por critério</h2>
-      <div class="ae-lista-simples" id="falhasPorCriterio"></div>
-    </div>
-  </section>
-
-  <!-- Tipo de atendimento + colaborador -->
-  <section class="ae-grade">
-    <div class="ae-card">
-      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Tipo de atendimento</h2>
-      <div class="ae-lista-simples" id="tiposAtendimento"></div>
-    </div>
-    <div class="ae-card">
-      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Por colaborador</h2>
-      <div class="ae-lista-simples" id="porColaborador"></div>
-    </div>
-  </section>
-
-  <!-- Lista de atendimentos -->
-  <section class="ae-card">
-    <div class="ae-card__cabecalho">
-      <h2 class="ae-titulo-secao">Atendimentos</h2>
-      <div class="ae-filtros__grupo">
-        <button class="ae-chip" data-sinal="sla_2h">🔴 SLA 2h</button>
-        <button class="ae-chip" data-sinal="sla_1h">⚠️ Aviso 1h</button>
-        <button class="ae-chip" data-sinal="insatisfacao">😟 Insatisfação</button>
-        <button class="ae-chip" data-sinal="palavra_chave">🚨 Palavra-chave</button>
-      </div>
-    </div>
-    <div class="ae-tabela-wrap">
-      <table class="ae-tabela" id="tabelaAtendimentos">
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Colaborador</th>
-            <th>Início</th>
-            <th>Status</th>
-            <th>Tipo</th>
-            <th>Score</th>
-            <th>Sinais</th>
-          </tr>
-        </thead>
-        <tbody id="corpoTabela">
-          <tr><td colspan="7" class="ae-carregando">Carregando atendimentos…</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="ae-paginacao">
-      <button class="ae-btn" id="btnPaginaAnterior" type="button">← Anterior</button>
-      <span class="ae-paginacao__info" id="infoPagina"></span>
-      <button class="ae-btn" id="btnProximaPagina" type="button">Próxima →</button>
-    </div>
-  </section>
-
-  <footer class="ae-rodape">
+  <footer class="vg-rodape">
     <span class="ae-apoio">Desenvolvido por</span>
-    <span class="ae-logo ae-logo--completo" style="height:16px" id="logoRodape" aria-label="Advocacia Escalável"></span>
+    <span class="ae-logo ae-logo--completo" aria-label="Advocacia Escalável" id="logo-rodape"></span>
   </footer>
 
 </div>
 
-<script src="config.js"></script>
+<div class="vg-tip" id="vg-tip" hidden></div>
+<div class="vg-toast" id="vg-toast" role="status" hidden></div>
+
+<script src="demo-data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
