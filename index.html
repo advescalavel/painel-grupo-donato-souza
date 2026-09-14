@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Vigia — Grupo Donato Souza</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ae-brand.css">
+<link rel="stylesheet" href="styles.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body class="ae-app" data-tema="claro">
+<div class="ae-app">
+
+  <!-- Cabeçalho -->
+  <header class="ae-cabecalho">
+    <div class="ae-cabecalho__marca">
+      <span class="ae-logo ae-logo--completo" aria-label="Advocacia Escalável" id="logoCompleto"></span>
+      <span class="ae-logo ae-logo--isotipo" aria-label="Advocacia Escalável" id="logoIsotipo"></span>
+      <span class="ae-produto__sep" aria-hidden="true"></span>
+      <span class="ae-produto__nome">PAINEL <b>VIGIA</b></span>
+    </div>
+    <div class="ae-cabecalho__contexto">
+      <h1 class="ae-titulo-app">Sucesso do Cliente</h1>
+      <p class="ae-apoio" id="nomeEscritorio">Grupo Donato Souza</p>
+    </div>
+    <div class="ae-cabecalho__acoes">
+      <button class="ae-tema-toggle" id="btnTema" type="button" aria-label="Alternar tema claro/escuro">
+        <span id="temaIcone">🌙</span> <span id="temaLabel">Escuro</span>
+      </button>
+      <button class="ae-btn" id="btnAtualizar" type="button">↻ Atualizar</button>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <div class="ae-filtros">
+    <div class="ae-filtros__grupo">
+      <span class="ae-filtros__label">Período</span>
+      <button class="ae-chip is-ativo" data-periodo="7">7 dias</button>
+      <button class="ae-chip" data-periodo="30">30 dias</button>
+      <button class="ae-chip" data-periodo="90">90 dias</button>
+      <button class="ae-chip" data-periodo="tudo">Tudo</button>
+    </div>
+    <div class="ae-filtros__grupo">
+      <span class="ae-filtros__label">Status</span>
+      <button class="ae-chip is-ativo" data-status="todos">Todos</button>
+      <button class="ae-chip" data-status="aberto">Em aberto</button>
+      <button class="ae-chip" data-status="concluido">Concluídos</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <section class="ae-kpis" id="kpis" aria-label="Indicadores principais">
+    <div class="ae-carregando">Carregando indicadores…</div>
+  </section>
+
+  <!-- Série + distribuição -->
+  <section class="ae-grade">
+    <div class="ae-card">
+      <div class="ae-card__cabecalho">
+        <h2 class="ae-titulo-secao">Atendimentos e efetividade</h2>
+        <span class="ae-legenda">
+          <span class="ae-legenda__item"><span class="ae-legenda__ponto" style="background: var(--ae-serie-2)"></span>Atendimentos</span>
+          <span class="ae-legenda__item"><span class="ae-legenda__ponto" style="background: var(--ae-serie-1)"></span>Score médio</span>
+        </span>
+      </div>
+      <canvas id="graficoSerie" height="220"></canvas>
+    </div>
+    <div class="ae-card">
+      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Distribuição de score</h2>
+      <div class="ae-barra-faixas" id="distribuicaoScore"></div>
+    </div>
+  </section>
+
+  <!-- Critérios + falhas -->
+  <section class="ae-grade">
+    <div class="ae-card">
+      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Critérios de avaliação</h2>
+      <p class="ae-apoio" style="margin:-8px 0 14px">% de atendimentos avaliados com nota ≥ 90 em cada critério</p>
+      <div class="ae-criterios" id="criterios"></div>
+    </div>
+    <div class="ae-card">
+      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Falhas por critério</h2>
+      <div class="ae-lista-simples" id="falhasPorCriterio"></div>
+    </div>
+  </section>
+
+  <!-- Tipo de atendimento + colaborador -->
+  <section class="ae-grade">
+    <div class="ae-card">
+      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Tipo de atendimento</h2>
+      <div class="ae-lista-simples" id="tiposAtendimento"></div>
+    </div>
+    <div class="ae-card">
+      <h2 class="ae-titulo-secao" style="margin-bottom:14px">Por colaborador</h2>
+      <div class="ae-lista-simples" id="porColaborador"></div>
+    </div>
+  </section>
+
+  <!-- Lista de atendimentos -->
+  <section class="ae-card">
+    <div class="ae-card__cabecalho">
+      <h2 class="ae-titulo-secao">Atendimentos</h2>
+      <div class="ae-filtros__grupo">
+        <button class="ae-chip" data-sinal="sla_2h">🔴 SLA 2h</button>
+        <button class="ae-chip" data-sinal="sla_1h">⚠️ Aviso 1h</button>
+        <button class="ae-chip" data-sinal="insatisfacao">😟 Insatisfação</button>
+        <button class="ae-chip" data-sinal="palavra_chave">🚨 Palavra-chave</button>
+      </div>
+    </div>
+    <div class="ae-tabela-wrap">
+      <table class="ae-tabela" id="tabelaAtendimentos">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Colaborador</th>
+            <th>Início</th>
+            <th>Status</th>
+            <th>Tipo</th>
+            <th>Score</th>
+            <th>Sinais</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabela">
+          <tr><td colspan="7" class="ae-carregando">Carregando atendimentos…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ae-paginacao">
+      <button class="ae-btn" id="btnPaginaAnterior" type="button">← Anterior</button>
+      <span class="ae-paginacao__info" id="infoPagina"></span>
+      <button class="ae-btn" id="btnProximaPagina" type="button">Próxima →</button>
+    </div>
+  </section>
+
+  <footer class="ae-rodape">
+    <span class="ae-apoio">Desenvolvido por</span>
+    <span class="ae-logo ae-logo--completo" style="height:16px" id="logoRodape" aria-label="Advocacia Escalável"></span>
+  </footer>
+
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

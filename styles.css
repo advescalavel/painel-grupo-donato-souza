@@ -1,0 +1,142 @@
+/* =============================================================================
+   Painel Vigia — Grupo Donato Souza
+   Estilos do app, construídos sobre os tokens --ae-* de ae-brand.css.
+   Superfície de trabalho em neutro; marca na moldura, no acento e nos gráficos.
+   ============================================================================= */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--ae-bg);
+  min-height: 100vh;
+}
+
+.ae-app { max-width: 1180px; margin: 0 auto; padding: 0 24px 64px; }
+
+/* ---------- Cabeçalho ---------- */
+.ae-cabecalho {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+  padding: 18px 0 16px;
+  border-bottom: 1px solid var(--ae-border);
+  margin-bottom: 24px;
+}
+.ae-cabecalho__marca {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding-bottom: 14px;
+}
+.ae-cabecalho__contexto { min-width: 0; }
+.ae-cabecalho__acoes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+@media (max-width: 700px) {
+  .ae-cabecalho { align-items: flex-start; }
+  .ae-cabecalho__acoes { width: 100%; }
+  .ae-cabecalho__marca .ae-logo--completo { display: none; }
+  .ae-cabecalho__marca .ae-logo--isotipo { display: inline-flex; }
+}
+@media (min-width: 701px) {
+  .ae-cabecalho__marca .ae-logo--isotipo { display: none; }
+}
+
+.ae-tema-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--ae-text-soft);
+  background: var(--ae-surface); border: 1px solid var(--ae-border);
+  border-radius: var(--ae-radius-pill); padding: 6px 12px; cursor: pointer;
+}
+.ae-tema-toggle:hover { border-color: var(--ae-border-strong); }
+
+/* ---------- Barra de filtros ---------- */
+.ae-filtros {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.ae-filtros__grupo { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ae-filtros__label { font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--ae-text-faint); margin-right: 4px; }
+
+/* ---------- KPIs ---------- */
+.ae-kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px; margin-bottom: 28px;
+}
+.ae-kpi-card {
+  background: var(--ae-surface); border: 1px solid var(--ae-border);
+  border-radius: var(--ae-radius-lg); padding: 16px 18px;
+  box-shadow: var(--ae-shadow-1);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.ae-kpi-card__rotulo { font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--ae-text-faint); }
+.ae-kpi-card__valor {
+  font-family: var(--ae-font-num); font-weight: 800; font-size: 30px;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--ae-text);
+  line-height: 1.1;
+}
+.ae-kpi-card--alerta { border-color: var(--ae-pink-line); }
+.ae-kpi-card--alerta .ae-kpi-card__valor { color: var(--ae-pink-ink); }
+.ae-kpi-card--alerta.is-zero .ae-kpi-card__valor { color: var(--ae-text); }
+
+/* ---------- Grade principal ---------- */
+.ae-grade {
+  display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-bottom: 24px;
+}
+@media (max-width: 900px) { .ae-grade { grid-template-columns: 1fr; } }
+
+.ae-card__cabecalho {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px; gap: 10px; flex-wrap: wrap;
+}
+
+.ae-legenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ae-text-soft); }
+.ae-legenda__item { display: inline-flex; align-items: center; gap: 6px; }
+.ae-legenda__ponto { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+/* ---------- Distribuição de score ---------- */
+.ae-barra-faixas { display: flex; flex-direction: column; gap: 10px; }
+.ae-barra-faixa { display: grid; grid-template-columns: 100px 1fr 40px; align-items: center; gap: 10px; }
+.ae-barra-faixa__trilho { background: var(--ae-surface-2); border-radius: var(--ae-radius-pill); height: 10px; overflow: hidden; }
+.ae-barra-faixa__preenchimento { height: 100%; border-radius: var(--ae-radius-pill); }
+
+/* ---------- Critérios ---------- */
+.ae-criterios { display: flex; flex-direction: column; gap: 12px; }
+.ae-criterio { display: grid; grid-template-columns: 140px 1fr auto; align-items: center; gap: 12px; }
+.ae-criterio__nome { font-size: 13px; font-weight: 600; color: var(--ae-text); }
+.ae-criterio__trilho { background: var(--ae-surface-2); border-radius: var(--ae-radius-pill); height: 8px; overflow: hidden; }
+.ae-criterio__preenchimento { height: 100%; background: var(--ae-pink); border-radius: var(--ae-radius-pill); }
+.ae-criterio__pct { font-family: var(--ae-font-num); font-weight: 700; font-size: 13px; color: var(--ae-text); min-width: 42px; text-align: right; }
+
+/* ---------- Listas simples (tipo/colaborador/falhas) ---------- */
+.ae-lista-simples { display: flex; flex-direction: column; }
+.ae-lista-simples__item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 0; border-bottom: 1px solid var(--ae-border);
+  font-size: 13.5px;
+}
+.ae-lista-simples__item:last-child { border-bottom: none; }
+.ae-lista-simples__qtd { font-family: var(--ae-font-num); font-weight: 700; color: var(--ae-text); }
+
+/* ---------- Tabela de atendimentos ---------- */
+.ae-tabela-wrap { overflow-x: auto; border-radius: var(--ae-radius-lg); border: 1px solid var(--ae-border); }
+.ae-tabela-linha--expandivel { cursor: pointer; }
+.ae-tabela-linha--expandivel:hover td { background: var(--ae-surface-2); }
+.ae-linha-detalhe td { background: var(--ae-bg); padding: 16px; }
+.ae-linha-detalhe { display: none; }
+.ae-linha-detalhe.is-aberta { display: table-row; }
+
+.ae-detalhe-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.ae-detalhe-bloco__rotulo { font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--ae-text-faint); margin-bottom: 4px; }
+.ae-detalhe-bloco__texto { font-size: 13px; color: var(--ae-text); }
+
+.ae-paginacao { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; }
+.ae-paginacao__info { font-size: 13px; color: var(--ae-text-soft); }
+
+/* ---------- Utilidades ---------- */
+.ae-scroll-x { overflow-x: auto; }
+.ae-oculto { display: none !important; }
+.ae-carregando { text-align: center; padding: 40px; color: var(--ae-text-soft); }
+canvas { max-width: 100%; }
